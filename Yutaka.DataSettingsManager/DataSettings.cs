@@ -1,12 +1,16 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
 
 namespace Yutaka.DataSettingsManager
 {
-    public class DataSettings
-    {
-    }
+	public class DataSettings
+	{
+		public DataSettings()
+		{
+			RawDataSettings = new Dictionary<string, string>();
+		}
+
+		public string Password { get; set; }
+
+		public IDictionary<string, string> RawDataSettings { get; private set; }
+	}
 }
