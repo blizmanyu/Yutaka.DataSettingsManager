@@ -10,7 +10,7 @@ namespace Yutaka.DataSettingsManager
 		}
 
 		public string Password { get; set; }
-
+		public string EncodedPassword { get; set; }
 		public IDictionary<string, string> RawDataSettings { get; private set; }
 	}
 }
