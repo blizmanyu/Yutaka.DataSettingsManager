@@ -6,15 +6,16 @@ namespace Yutaka.DataSettingsManager
 {
 	public class DataSettingsManager
 	{
-		protected const char separator = ':';
-		protected const string filename = "Settings.txt";
+		protected char separator = ':';
+		protected string filename = "settings.txt";
+		protected string defaultFolder = @"C:\TEMP\";
 
 		/// <summary>
 		/// Parse settings
 		/// </summary>
 		/// <param name="text">Text of settings file</param>
 		/// <returns>Parsed data settings</returns>
-		protected virtual DataSettings ParseSettings(string text)
+		protected DataSettings ParseSettings(string text)
 		{
 			var shellSettings = new DataSettings();
 			if (String.IsNullOrEmpty(text))
@@ -29,13 +30,14 @@ namespace Yutaka.DataSettingsManager
 					settings.Add(str);
 			}
 
-			foreach (var setting in settings) {
-				var separatorIndex = setting.IndexOf(separator);
-				if (separatorIndex == -1) {
-					continue;
-				}
-				string key = setting.Substring(0, separatorIndex).Trim();
-				string value = setting.Substring(separatorIndex + 1).Trim();
+			for (int i=0; i< settings.Count; i++) {
+				var separatorIndex = settings[i].IndexOf(separator);
+
+				if (separatorIndex == -1)
+					continue; // skip this line //
+
+				var key = settings[i].Substring(0, separatorIndex).Trim();
+				var value = settings[i].Substring(separatorIndex + 1).Trim();
 
 				switch (key) {
 					case "Password":
@@ -58,16 +60,15 @@ namespace Yutaka.DataSettingsManager
 		/// </summary>
 		/// <param name="settings">Settings</param>
 		/// <returns>Text</returns>
-		protected virtual string ComposeSettings(DataSettings settings)
+		protected string ComposeSettings(DataSettings settings)
 		{
 			if (settings == null)
 				return "";
 
-			return string.Format("DataProvider: {0}{2}DataConnectionString: {1}{2}",
+			return string.Format("Password: {0}{2}EncodedPassword: {1}{2}",
 								 settings.Password,
 								 settings.EncodedPassword,
-								 Environment.NewLine
-				);
+								 Environment.NewLine);
 		}
 
 		/// <summary>
@@ -75,24 +76,22 @@ namespace Yutaka.DataSettingsManager
 		/// </summary>
 		/// <param name="filePath">File path; pass null to use default settings file path</param>
 		/// <returns></returns>
-		//public virtual DataSettings LoadSettings(string filePath = null)
-		//{
-		//	if (String.IsNullOrEmpty(filePath)) {
-		//		filePath = Path.Combine(CommonHelper.MapPath("~/App_Data/"), filename);
-		//	}
-		//	if (File.Exists(filePath)) {
-		//		string text = File.ReadAllText(filePath);
-		//		return ParseSettings(text);
-		//	}
+		public DataSettings LoadSettings(string filePath = null)
+		{
+			if (String.IsNullOrEmpty(filePath))
+				filePath = Path.Combine(defaultFolder, filename);
+			
+			if (File.Exists(filePath))
+				return ParseSettings(File.ReadAllText(filePath));
 
-		//	return new DataSettings();
-		//}
+			return new DataSettings();
+		}
 
 		/// <summary>
 		/// Save settings to a file
 		/// </summary>
 		/// <param name="settings"></param>
-		//public virtual void SaveSettings(DataSettings settings)
+		//public void SaveSettings(DataSettings settings)
 		//{
 		//	if (settings == null)
 		//		throw new ArgumentNullException("settings");
